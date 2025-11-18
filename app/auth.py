@@ -6,14 +6,18 @@ from fastapi import HTTPException, status
 # Secret key for JWT tokens
 SECRET_KEY = "your-secret-key-change-in-production"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Use a different hashing algorithm that doesn't have the 72-byte limit
+pwd_context = CryptContext(schemes=["argon2", "bcrypt"], deprecated="auto")
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password):
+    # Truncate password to 72 characters if it's longer
+    if len(password) > 72:
+        password = password[:72]
     return pwd_context.hash(password)
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
