@@ -23,6 +23,6 @@ class JournalEntry(Base):
     sentiment_score = Column(Float)  # -1 to 1
     sentiment_label = Column(String)  # positive, negative, neutral
     created_at = Column(DateTime, default=datetime.utcnow)
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, ForeignKey(("users.id"), ondelete="CASCADE"))
 
     owner = relationship("User", back_populates="entries")
