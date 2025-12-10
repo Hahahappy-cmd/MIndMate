@@ -7,7 +7,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_PATH = os.path.join(BASE_DIR, 'mindmate.db')
 SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_PATH}"
 
-print(f"📊 Database path: {DB_PATH}")  # This will show us the exact path
+print(f" Database path: {DB_PATH}")  # This will show us the exact path
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,

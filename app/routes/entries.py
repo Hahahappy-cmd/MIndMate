@@ -35,7 +35,6 @@ def get_entries(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
-    # Only return current user's entries
     entries = db.query(models.JournalEntry).filter(
         models.JournalEntry.user_id == current_user.id
     ).order_by(models.JournalEntry.created_at.desc()).all()
@@ -77,12 +76,12 @@ def update_entry(
             detail="Entry not found"
         )
     
-    # Update fields if provided
+    
     if entry_update.title is not None:
         entry.title = entry_update.title
     if entry_update.content is not None:
         entry.content = entry_update.content
-        # Re-analyze sentiment if content changed
+        
         sentiment_result = sentiment.analyze_sentiment(entry.content)
         entry.sentiment_score = sentiment_result["sentiment_score"]
         entry.sentiment_label = sentiment_result["sentiment_label"]
