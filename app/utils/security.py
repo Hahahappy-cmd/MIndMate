@@ -1,6 +1,6 @@
 import secrets
 import string
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 def generate_reset_token(length=32):
     
@@ -9,7 +9,7 @@ def generate_reset_token(length=32):
 
 def is_token_expired(expires_at: datetime) -> bool:
     
-    return datetime.utcnow() > expires_at
+    return datetime.now(timezone.utc) > expires_at
 
 def validate_password_strength(password: str) -> bool:
     

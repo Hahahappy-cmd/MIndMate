@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from .database import Base
 
 
@@ -24,9 +24,13 @@ class JournalEntry(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
     content = Column(Text)
-    sentiment_score = Column(Float)  # -1 to 1
-    sentiment_label = Column(String)  # positive, negative, neutral
-    created_at = Column(DateTime, default=datetime.utcnow)
+    sentiment_score = Column(Float)
+    sentiment_label = Column(String)
+    subjectivity = Column(Float, nullable=True)  # New: How subjective/objective
+    word_count = Column(Integer, nullable=True)  # New: Word count
+    emotion_data = Column(Text, nullable=True)   # New: JSON string of emotions
+    key_phrases = Column(Text, nullable=True)    # New: JSON string of key phrases
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
 
     owner = relationship("User", back_populates="entries")

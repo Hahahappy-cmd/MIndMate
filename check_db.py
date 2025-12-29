@@ -1,38 +1,30 @@
+# quick_check.py
 import sqlite3
-import os
+import json
 
-db_path = "mindmate.db"
-print(f"Checking database at: {os.path.abspath(db_path)}")
+conn = sqlite3.connect('mindmate.db')
+cursor = conn.cursor()
 
-if os.path.exists(db_path):
-    print("✅ Database file found!")
+cursor.execute("""
+    SELECT emotion_data, subjectivity, key_phrases 
+    FROM journal_entries 
+    WHERE id = 3
+""")
+data = cursor.fetchone()
 
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
+if data:
+    print("🔍 Full AI Analysis of Entry #3:")
+    if data[0]:
+        emotions = json.loads(data[0])
+        print("😊 Emotions:")
+        for emotion, score in emotions.items():
+            if score > 0:
+                print(f"  {emotion}: {score:.2f}")
+    
+    print(f"📊 Subjectivity: {data[1]:.3f}")
+    
+    if data[2]:
+        phrases = json.loads(data[2])
+        print(f"🔑 Key phrases: {phrases}")
 
-    # List tables and show ALL data
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    tables = cursor.fetchall()
-    print("\n📋 Tables in database:", tables)
-
-    for table in tables:
-        table_name = table[0]
-        print(f"\n--- {table_name} ---")
-
-        # Show table structure
-        cursor.execute(f"PRAGMA table_info({table_name})")
-        columns = cursor.fetchall()
-        print("Structure:")
-        for col in columns:
-            print(f"  {col[1]} ({col[2]})")
-
-        # Show ALL data
-        cursor.execute(f"SELECT * FROM {table_name}")
-        rows = cursor.fetchall()
-        print(f"Data ({len(rows)} rows):")
-        for row in rows:
-            print(f"  {row}")
-
-    conn.close()
-else:
-    print("❌ Database file not found!")
+conn.close()
